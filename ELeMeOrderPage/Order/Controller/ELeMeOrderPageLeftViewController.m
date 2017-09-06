@@ -102,15 +102,16 @@
         }
         
         if (vc.offsetType == OffsetTypeMin) {
-            scrollView.contentOffset = CGPointMake(0,  _oldRightOffsetY);
+            scrollView.contentOffset = CGPointZero;
         }
         if (vc.offsetType == OffsetTypeCenter) {
-            scrollView.contentOffset = CGPointMake(0,  _oldRightOffsetY);
+            scrollView.contentOffset = CGPointZero;
         }
         if (vc.offsetType == OffsetTypeMax) {
             
         }
         
+        //联动逻辑：rightTableViews顶部section头消失出现 实现 leftTableView选择联动
         if (scrollView.contentOffset.y>_oldRightOffsetY) {
             _rightTVScrollUp = YES;
             _rightTVScrollDown =  !_rightTVScrollUp;
@@ -268,7 +269,7 @@
     return headerHeight;
 }
 
-#pragma mark -  leftTableView rightTableView实现联动
+#pragma mark -  leftTableView rightTableView实现联动 : rightTableViews顶部section头消失出现 实现 leftTableView选择联动
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (tableView==self.leftTableView) {
@@ -298,7 +299,7 @@
 }
 
 
-
+#pragma mark -
 -(void)scrollRightTableViewWhenSelectRowInLeftTableViewAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger section = indexPath.row;
