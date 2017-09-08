@@ -18,11 +18,11 @@
 
 #import "OrderFoodModel.h"
 @interface ELeMeOrderPageViewMainController ()<UITableViewDelegate,UITableViewDataSource,ELeMeOrderPageLevelListViewDelegate>
-@property(nonatomic, strong)UITableView *mainTableView;
-@property(nonatomic, strong)UIScrollView *subScrollView;
-@property(nonatomic, strong)ELeMeOrderPageLeftViewController *subLeftVC;
-@property(nonatomic, strong)ELeMeOrderPageRightViewController *subRightVC;
-@property(nonatomic, strong)ELeMeOrderPageLevelListView *levelListView;
+@property(nonatomic, strong)UITableView *mainTableView;//主tableView
+@property(nonatomic, strong)UIScrollView *subScrollView;//添加到cell的滚动视图 实现 “点菜” “商家滑动切换”
+@property(nonatomic, strong)ELeMeOrderPageLeftViewController *subLeftVC;//点菜控制器
+@property(nonatomic, strong)ELeMeOrderPageRightViewController *subRightVC;//商家控制器
+@property(nonatomic, strong)ELeMeOrderPageLevelListView *levelListView;//section头视图
 @property(nonatomic, strong)OrderFoodModel *foodModel;
 @end
 
@@ -155,12 +155,12 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
     if ([scrollView isEqual:self.mainTableView]) {
-        
-        NSLog(@"%lf, %lf", scrollView.contentOffset.y, scrollView.contentSize.height-scrollView.bounds.size.height);
+//        
+//        NSLog(@"%lf, %lf", scrollView.contentOffset.y, scrollView.contentSize.height-scrollView.bounds.size.height);
         
         if (scrollView.contentOffset.y >= (scrollView.contentSize.height-scrollView.bounds.size.height-0.5)) {//mainTableView 滚动不能超过最大值
             self.offsetType = OffsetTypeMax;
-            scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, scrollView.contentSize.height-scrollView.bounds.size.height);
+            scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, scrollView.contentSize.height-scrollView.bounds.size.height);//(scrollView.contentSize.height-scrollView.bounds.size.height):mainTableView 可以滚动的最大偏移距离 超过等于最大偏移距离 不可以再向上滑动
              _mainTableViewOldOffSet = scrollView.contentSize.height-scrollView.bounds.size.height;
         } else if (scrollView.contentOffset.y <= 0) {
             self.offsetType = OffsetTypeMin;
@@ -170,12 +170,12 @@
         
        
        
-        if ((self.levelListView.selectedIndex == 0 && self.subLeftVC.offsetType != OffsetTypeMin)&&(self.subLeftVC.rightTVScrollDown||(scrollView.contentOffset.y-_mainTableViewOldOffSet<0))) {//self.subLeftVC.offsetType != OffsetTypeMin时_mainTableView不能向下滑动
+        if ((self.levelListView.selectedIndex == 0 && self.subLeftVC.offsetType != OffsetTypeMin)&&(self.subLeftVC.rightTVScrollDown||(scrollView.contentOffset.y-_mainTableViewOldOffSet<0))) {//self.subLeftVC.offsetType != OffsetTypeMin时_mainTableView不能向下滑动（注释：当点菜页面显示并且商品列表tableView未达到最大偏移量之前，mainTableView不能向下滑动 ）
             scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, _mainTableViewOldOffSet);
         }
         
       
-        if (self.levelListView.selectedIndex == 1 &&self.subRightVC.offsetType != OffsetTypeMin) {
+        if (self.levelListView.selectedIndex == 1 &&self.subRightVC.offsetType != OffsetTypeMin) {//当商家页面显示时，商家信息tableview偏移量不是最小状态 说明mainTableView 已经滚动到了最大值 在商家信息tableview偏移量未达到最小偏移量之前  mainTableView需要保持原来的偏移量不变
             scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, _mainTableViewOldOffSet);
         }
         
