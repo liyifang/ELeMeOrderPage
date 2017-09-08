@@ -18,7 +18,7 @@
 @implementation ELeMeOrderPageLeftViewController
 {
     BOOL _rightTVScrollUp;
-    BOOL _rightTVScrollDown;
+   
     CGFloat _oldRightOffsetY;
     BOOL _didSelectLeftTVCell;//选中左边tableView cell
 }
@@ -93,36 +93,39 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
     ELeMeOrderPageViewMainController *vc = (ELeMeOrderPageViewMainController *)[self parentViewController];//父控制器
+    
+    NSLog(@"aaaaaaaaaaaaaa=====%f",scrollView.contentOffset.y);
     if (scrollView==self.rightTableView&&!_didSelectLeftTVCell) {
-        if (scrollView.contentOffset.y <= 0) {
+        if (scrollView.contentOffset.y <= 0) {//rightTableView不能小于最小值
             self.offsetType = OffsetTypeMin;
-            scrollView.contentOffset = CGPointZero;
+            scrollView.contentOffset =CGPointZero;
         } else {
             self.offsetType = OffsetTypeCenter;
         }
         
-        if (vc.offsetType == OffsetTypeMin) {
-            scrollView.contentOffset = CGPointZero;
-        }
-        if (vc.offsetType == OffsetTypeCenter) {
-            scrollView.contentOffset = CGPointZero;
-        }
-        if (vc.offsetType == OffsetTypeMax) {
-            
-        }
         
         //联动逻辑：rightTableViews顶部section头消失出现 实现 leftTableView选择联动
         if (scrollView.contentOffset.y>_oldRightOffsetY) {
             _rightTVScrollUp = YES;
             _rightTVScrollDown =  !_rightTVScrollUp;
-
+            
             
         } else if (scrollView.contentOffset.y<_oldRightOffsetY)
         {
             _rightTVScrollUp = NO;
             _rightTVScrollDown =  !_rightTVScrollUp;
         }
-        _oldRightOffsetY = scrollView.contentOffset.y;
+
+        
+        if (vc.offsetType != OffsetTypeMax&&_rightTVScrollUp) {//vc.offsetType!= OffsetTypeMax  时rightTableView不能向上滑动
+            scrollView.contentOffset = CGPointMake(0, _oldRightOffsetY);
+        }
+        if (vc.offsetType == OffsetTypeMax) {
+            
+        }
+        
+                NSLog(@"ccccccccccc=====%f",scrollView.contentOffset.y);
+        _oldRightOffsetY = floorf(scrollView.contentOffset.y);
     }
     
 }
@@ -131,6 +134,7 @@
 {
     if (scrollView==self.rightTableView) {
         _didSelectLeftTVCell = NO;
+        _oldRightOffsetY = floorf(scrollView.contentOffset.y);
     }
 }
 //代理UITableViewDelegate,UITableViewDataSource,UIScrollViewDelegate
@@ -167,7 +171,7 @@
 {
     __weak __typeof(self) weekSelf = self;
     if (tableView==self.leftTableView) {
-        OrderFoodMenuTypeModel *menuType = self.orderFoodModel.menuTypesModelArr[indexPath.row];
+       OrderFoodMenuTypeModel *menuType = self.orderFoodModel.menuTypesModelArr[indexPath.row];
        ELeMeOrderPageLeftVCLeftCell *leftCell = [tableView dequeueReusableCellWithIdentifier:@"cell1" forIndexPath:indexPath];
         leftCell.backgroundColor = [UIColor colorWithHexString:@"e6e6e6"];
         leftCell.text = menuType.goods_type;
@@ -181,6 +185,7 @@
     }
     else
     {
+        
         ELeMeOrderPageLeftVCRightCell *rightCell = [tableView dequeueReusableCellWithIdentifier:@"cell2" forIndexPath:indexPath];
         rightCell.isFirst = YES;
         rightCell.selectionStyle =  UITableViewCellSelectionStyleNone;

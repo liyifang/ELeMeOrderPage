@@ -14,6 +14,7 @@ typedef  NS_ENUM(NSInteger,ButtonTag)
 {
     LeftButtonTag = 101,
     RightButtonTag = 102,
+   
 };
 
 
@@ -21,6 +22,7 @@ typedef  NS_ENUM(NSInteger,ButtonTag)
 {
     
     UIView *_lineView;
+    BOOL _isClickButton;
 }
 
 -(instancetype)initWithFrame:(CGRect)frame
@@ -83,14 +85,8 @@ typedef  NS_ENUM(NSInteger,ButtonTag)
 
 -(void)clickButton:(UIButton *)sender
 {
-    sender.selected = YES;
-    if (sender.tag == LeftButtonTag) {
-        _rightButton.selected = !_leftButton.selected;
-    }
-    {
-        _leftButton.selected = !_rightButton.selected;
-    }
-    BOOL isLeftButton =  _leftButton.selected  ? YES : NO;//判断点击的是否是LeftButton
+  
+    BOOL isLeftButton =  _leftButton==sender  ? YES : NO;//判断点击的是否是LeftButton
     
     if (self.delegate&&[self.delegate respondsToSelector:@selector(selectedButton:)]) {
         [self.delegate selectedButton:isLeftButton];
@@ -110,6 +106,14 @@ typedef  NS_ENUM(NSInteger,ButtonTag)
    
     linViewFrame.origin.x = x;    //
     _lineView.frame =  linViewFrame;
+    
+    if (offsetX==0||offsetX==ScreenWidth) {
+        _leftButton.selected = offsetX/ScreenWidth ==0 ? YES : NO;
+        _rightButton.selected = !_leftButton.selected;
+    }
+    
+        
+
     
 }
 

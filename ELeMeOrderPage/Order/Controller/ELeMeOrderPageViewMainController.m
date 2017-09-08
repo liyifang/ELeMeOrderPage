@@ -27,6 +27,9 @@
 @end
 
 @implementation ELeMeOrderPageViewMainController
+{
+    CGFloat _mainTableViewOldOffSet;
+}
 
 -(void)viewDidLoad
 {
@@ -155,36 +158,32 @@
         
         NSLog(@"%lf, %lf", scrollView.contentOffset.y, scrollView.contentSize.height-scrollView.bounds.size.height);
         
-        if (scrollView.contentOffset.y >= (scrollView.contentSize.height-scrollView.bounds.size.height-0.5)) {
+        if (scrollView.contentOffset.y >= (scrollView.contentSize.height-scrollView.bounds.size.height-0.5)) {//mainTableView 滚动不能超过最大值
             self.offsetType = OffsetTypeMax;
             scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, scrollView.contentSize.height-scrollView.bounds.size.height);
+             _mainTableViewOldOffSet = scrollView.contentSize.height-scrollView.bounds.size.height;
         } else if (scrollView.contentOffset.y <= 0) {
             self.offsetType = OffsetTypeMin;
         } else {
             self.offsetType = OffsetTypeCenter;
         }
         
-        
-        if (self.levelListView.selectedIndex == 0 &&self.subLeftVC.offsetType == OffsetTypeMin) {
-            
-        }
-        if (self.levelListView.selectedIndex == 0 && self.subLeftVC.offsetType == OffsetTypeCenter) {
-            scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, scrollView.contentSize.height-scrollView.bounds.size.height);
+       
+       
+        if ((self.levelListView.selectedIndex == 0 && self.subLeftVC.offsetType != OffsetTypeMin)&&(self.subLeftVC.rightTVScrollDown||(scrollView.contentOffset.y-_mainTableViewOldOffSet<0))) {//self.subLeftVC.offsetType != OffsetTypeMin时_mainTableView不能向下滑动
+            scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, _mainTableViewOldOffSet);
         }
         
-        if (self.levelListView.selectedIndex == 1 && self.subRightVC.offsetType == OffsetTypeMin) {
-            
+      
+        if (self.levelListView.selectedIndex == 1 &&self.subRightVC.offsetType != OffsetTypeMin) {
+            scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, _mainTableViewOldOffSet);
         }
-        if (self.levelListView.selectedIndex == 1 &&self.subRightVC.offsetType == OffsetTypeCenter) {
-            scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, scrollView.contentSize.height-scrollView.bounds.size.height);
-        }
+        
+        _mainTableViewOldOffSet = scrollView.contentOffset.y;
         
     }
     
     if ([scrollView isEqual:self.subScrollView]) {
-        
-       
-        
         [self.levelListView changeLineViewOffsetX:self.subScrollView.contentOffset.x];
     }
     

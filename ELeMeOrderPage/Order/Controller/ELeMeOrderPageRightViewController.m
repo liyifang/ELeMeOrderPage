@@ -42,14 +42,13 @@
     
     if (scrollView.contentOffset.y <= 0) {
         self.offsetType = OffsetTypeMin;
+        scrollView.contentOffset = CGPointZero;
     } else {
         self.offsetType = OffsetTypeCenter;
     }
     
-    if (vc.offsetType == OffsetTypeMin) {
-        scrollView.contentOffset = CGPointZero;
-    }
-    if (vc.offsetType == OffsetTypeCenter) {
+    
+    if (vc.offsetType != OffsetTypeMax) {
         scrollView.contentOffset = CGPointZero;
     }
     if (vc.offsetType == OffsetTypeMax) {
@@ -69,7 +68,7 @@
 //row数
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger rowNum;
+    NSInteger rowNum = 0;
     switch (section) {
         case 0:
             rowNum = 1;

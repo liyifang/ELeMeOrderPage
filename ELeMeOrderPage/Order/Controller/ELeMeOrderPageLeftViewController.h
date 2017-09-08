@@ -13,4 +13,5 @@
 @property(nonatomic, strong,readonly)LWGesturePenetrationTableView *rightTableView;
 @property (nonatomic, assign) OffsetType offsetType;
 @property (nonatomic, strong)OrderFoodModel *orderFoodModel;
+@property(nonatomic, assign) BOOL rightTVScrollDown;
 @end
